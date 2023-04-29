@@ -2,6 +2,8 @@
 
 load('//rules:json_to_csv.bzl', 'json_to_csv')
 
+# TODO: How do we integrate json_to_csv.py more closely with our build rule?  Is that a thing we can even do?  Should we just use genrule?
+# TODO: If json_to_csv.py itself imports other Python source, how do we make buck track that too?
 json_to_csv(
     name="hello_csv",
     script="./json_to_csv.py",

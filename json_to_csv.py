@@ -2,9 +2,9 @@
 import sys
 import json
 
-print('json_to_csv', sys.argv)
-
-settings = json.load(open('settings.json')) # we did a bad job!
+# We did a bad job!
+# The buck rule for this script doesn't mention settings.json.  As a result, buck will not track that dependency.
+# settings = json.load(open('settings.json'))
 
 doc = json.load(open(sys.argv[1]))
 
