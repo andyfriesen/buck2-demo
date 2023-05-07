@@ -1,5 +1,9 @@
 # A list of available rules and their signatures can be found here: https://buck2.build/docs/generated/starlark/prelude/prelude.bzl
 
+load(":weirdstuff.bzl", "tests")
+
+tests(name = "tests")
+
 python_library(
     name='json_to_csv_lib',
     srcs=['json_to_csv.py']
