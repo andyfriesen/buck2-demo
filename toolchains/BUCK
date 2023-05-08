@@ -1,6 +1,7 @@
 load("@prelude//toolchains:genrule.bzl", "system_genrule_toolchain")
 load("@prelude//toolchains:cxx.bzl", "system_cxx_toolchain")
 load("@prelude//toolchains:python.bzl", "system_python_toolchain", "system_python_bootstrap_toolchain")
+load(":clang-from-llvm.bzl", "custom_clang_cxx")
 
 system_genrule_toolchain(
     name = "genrule",
@@ -8,10 +9,10 @@ system_genrule_toolchain(
 )
 
 
-system_cxx_toolchain(
-    name = "cxx",
-    visibility = ["PUBLIC"],
-)
+# system_cxx_toolchain(
+#     name = "cxx",
+#     visibility = ["PUBLIC"],
+# )
 
 system_python_toolchain(
     name='python',
@@ -21,4 +22,22 @@ system_python_toolchain(
 system_python_bootstrap_toolchain(
     name = "python_bootstrap",
     visibility = ["PUBLIC"],
+
+    # TODO: Figure out how to let the builtin stuff do the right thing.  This is wrong on Windows.
+    interpreter = 'python3'
+)
+
+# TODO: Figure out how to switch on the target OS.
+http_archive(
+    name = "clang-16-linux-archive",
+    sha256 = "2b8a69798e8dddeb57a186ecac217a35ea45607cb2b3cf30014431cff4340ad1",
+    urls = [
+        "https://github.com/llvm/llvm-project/releases/download/llvmorg-16.0.0/clang+llvm-16.0.0-x86_64-linux-gnu-ubuntu-18.04.tar.xz"
+    ]
+)
+
+custom_clang_cxx(
+    name = "cxx",
+    visibility = ["PUBLIC"],
+    distribution=':clang-16-linux-archive'
 )
