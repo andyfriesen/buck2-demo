@@ -1,1 +1,2 @@
 /buck-out/
+/buildbarn-docker-compose/volumes
