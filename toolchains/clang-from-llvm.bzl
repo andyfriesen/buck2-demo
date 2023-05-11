@@ -21,27 +21,53 @@ load(
     "LinkStyle",
 )
 
+load("@prelude//decls:core_rules.bzl", "http_archive")
 load("@prelude//http_archive:http_archive.bzl", "http_archive_impl")
 
 DEFAULT_MAKE_COMP_DB = "prelude//cxx/tools:make_comp_db"
 
-# _http_archive = rule(
-#     impl = http_archive,
-#     attrs = {
-#         "sha256": attrs.string(default = ""),
-#         "urls": attrs.list(attrs.string(), default = []),
-#     },
-# )
+# FIXME I couldn't figure out how to invoke the standard http_archive rule from this file.
+_http_archive = rule(
+    impl = http_archive_impl,
+    attrs = http_archive.attrs,
+)
+
+TAR_PATH = "clang+llvm-16.0.0-x86_64-linux-gnu-ubuntu-18.04"
 
 def _bin(src, name):
-    f = "{}/clang+llvm-16.0.0-x86_64-linux-gnu-ubuntu-18.04/bin/" + name
+    f = "{}/bin/" + name
     return cmd_args(src, format = f)
 
-def _custom_clang_cxx_impl(ctx):
-    src = ctx.attrs.distribution[DefaultInfo].default_outputs[0]
-    # dst = ctx.actions.declare_output("clang")
+def download_clang_dist(name, sha256, urls):
+    archive_name = name + "-archive"
+    # TODO: Figure out how to switch on the target OS.
+    _http_archive(
+        name = name,
+        sha256 = sha256,
+        urls = urls
+    )
 
-    # ctx.actions.run(['ln', '-srf', src, dst.as_output()], category = "cp_compiler")
+def _custom_clang_cxx_impl(ctx):
+    src = cmd_args(ctx.attrs.distribution[DefaultInfo].default_outputs[0], format="{}/" + TAR_PATH)
+
+    libcxx_options = [
+        "-nostdlib++",
+        "-nostdinc++",
+        cmd_args(src, format = "-isystem{}/include/c++/v1"),
+        cmd_args(src, format = "-isystem{}/include/x86_64-unknown-linux-gnu/c++/v1/"),
+        # cmd_args(src, format = "-Wl,-rpath,{}/lib"),
+    ]
+
+    link_options = [
+        "-lc",
+        "-lc++",
+        # "-stdlib=libc++",
+        # "-nostdinc++",
+        cmd_args(src, format = "-L/usr/lib"),
+        cmd_args(src, format = "-L/usr/lib/x86_64-linux-gnu"),
+        cmd_args(src, format = "-L{}/lib"),
+        cmd_args(src, format = "-L{}/lib/x86_64-unknown-linux-gnu"),
+    ]
 
     return [
         DefaultInfo(),
@@ -53,7 +79,7 @@ def _custom_clang_cxx_impl(ctx):
             cxx_compiler_info = CxxCompilerInfo(
                 compiler = RunInfo(args = _bin(src, "clang++")),
                 compiler_type = "clang",
-                compiler_flags = ctx.attrs.cxx_compiler_flags,
+                compiler_flags = libcxx_options + ctx.attrs.cxx_compiler_flags,
             ),
             linker_info = LinkerInfo(
                 archiver = RunInfo(args = _bin(src, "llvm-ar")),
@@ -66,8 +92,8 @@ def _custom_clang_cxx_impl(ctx):
                 link_libraries_locally = False,
                 link_style = LinkStyle(ctx.attrs.link_style),
                 link_weight = 1,
-                linker = RunInfo(args = _bin(src, "lld")),
-                linker_flags = ctx.attrs.linker_flags,
+                linker = RunInfo(args = _bin(src, "ld.lld")),
+                linker_flags = link_options + ctx.attrs.linker_flags,
                 object_file_extension = "o",
                 shlib_interfaces = "disabled",
                 shared_library_name_format = "lib{}.so",
