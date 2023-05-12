@@ -4,3 +4,6 @@
 [submodule "local-execution/prelude"]
 	path = local-execution/prelude
 	url = https://github.com/facebook/buck2-prelude.git
+[submodule "remote-execution/prelude"]
+	path = remote-execution/prelude
+	url = https://github.com/facebook/buck2-prelude.git
