@@ -34,6 +34,13 @@ download_clang_dist(
     ]
 )
 
+# genrule(
+#     name = "clang-dist",
+#     srcs = ["clang+llvm-16.0.0-x86_64-linux-gnu-ubuntu-18.04.tar.xz"],
+#     out = "clang-16-archive",
+#     cmd = "mkdir ${OUT} && tar xvf ${SRCS} -C ${OUT}"
+# )
+
 custom_clang_cxx(
     name = "cxx",
     visibility = ["PUBLIC"],
