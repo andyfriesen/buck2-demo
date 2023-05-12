@@ -8,10 +8,13 @@ system_genrule_toolchain(
     visibility = ["PUBLIC"],
 )
 
-# system_cxx_toolchain(
-#     name = "cxx",
-#     visibility = ["PUBLIC"],
-# )
+system_cxx_toolchain(
+    name = "cxx",
+    visibility = ["PUBLIC"],
+
+    compiler="clang-15",
+    cxx_compiler="clang++-15",
+)
 
 system_python_toolchain(
     name='python',
@@ -26,23 +29,24 @@ system_python_bootstrap_toolchain(
     interpreter = 'python3'
 )
 
-download_clang_dist(
-    name = "clang-dist",
-    sha256 = "2b8a69798e8dddeb57a186ecac217a35ea45607cb2b3cf30014431cff4340ad1",
-    urls = [
-        "https://github.com/llvm/llvm-project/releases/download/llvmorg-16.0.0/clang+llvm-16.0.0-x86_64-linux-gnu-ubuntu-18.04.tar.xz"
-    ]
-)
+# download_clang_dist(
+#     name = "clang-dist",
+#     sha256 = "2b8a69798e8dddeb57a186ecac217a35ea45607cb2b3cf30014431cff4340ad1",
+#     urls = [
+#         "https://github.com/llvm/llvm-project/releases/download/llvmorg-16.0.0/clang+llvm-16.0.0-x86_64-linux-gnu-ubuntu-18.04.tar.xz"
+#     ]
+# )
 
 # genrule(
 #     name = "clang-dist",
 #     srcs = ["clang+llvm-16.0.0-x86_64-linux-gnu-ubuntu-18.04.tar.xz"],
 #     out = "clang-16-archive",
-#     cmd = "mkdir ${OUT} && tar xvf ${SRCS} -C ${OUT}"
+#     cmd = "mkdir ${OUT} && tar xvf ${SRCS} -C ${OUT}",
+#     remote = False,
 # )
 
-custom_clang_cxx(
-    name = "cxx",
-    visibility = ["PUBLIC"],
-    distribution=':clang-dist'
-)
+# custom_clang_cxx(
+#     name = "cxx",
+#     visibility = ["PUBLIC"],
+#     distribution=':clang-dist'
+# )
