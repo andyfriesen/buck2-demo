@@ -14,11 +14,15 @@ system_cxx_toolchain(
 
     compiler="clang-15",
     cxx_compiler="clang++-15",
+
+    cxx_flags=["-std=c++17"],
 )
 
 system_python_toolchain(
     name='python',
     visibility=["PUBLIC"],
+
+    interpreter = 'python3'
 )
 
 system_python_bootstrap_toolchain(
