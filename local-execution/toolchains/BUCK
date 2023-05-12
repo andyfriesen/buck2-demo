@@ -1,0 +1,33 @@
+load("@prelude//toolchains:genrule.bzl", "system_genrule_toolchain")
+load("@prelude//toolchains:cxx.bzl", "system_cxx_toolchain")
+load("@prelude//toolchains:python.bzl", "system_python_toolchain", "system_python_bootstrap_toolchain")
+
+system_genrule_toolchain(
+    name = "genrule",
+    visibility = ["PUBLIC"],
+)
+
+system_cxx_toolchain(
+    name = "cxx",
+    visibility = ["PUBLIC"],
+
+    compiler="clang-15",
+    cxx_compiler="clang++-15",
+
+    cxx_flags=["-std=c++17"],
+)
+
+system_python_toolchain(
+    name='python',
+    visibility=["PUBLIC"],
+
+    interpreter = 'python3'
+)
+
+system_python_bootstrap_toolchain(
+    name = "python_bootstrap",
+    visibility = ["PUBLIC"],
+
+    # TODO: Figure out how to let the builtin stuff do the right thing.  This is wrong on Windows.
+    interpreter = 'python3'
+)
