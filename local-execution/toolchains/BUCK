@@ -2,6 +2,11 @@ load("@prelude//toolchains:genrule.bzl", "system_genrule_toolchain")
 load("@prelude//toolchains:cxx.bzl", "system_cxx_toolchain")
 load("@prelude//toolchains:python.bzl", "system_python_toolchain", "system_python_bootstrap_toolchain")
 
+asan_options = select({
+    'DEFAULT': [],
+    'root//platforms/constraints:asan': ['-fsanitize=address'],
+})
+
 system_genrule_toolchain(
     name = "genrule",
     visibility = ["PUBLIC"],
@@ -14,7 +19,8 @@ system_cxx_toolchain(
     compiler="clang-15",
     cxx_compiler="clang++-15",
 
-    cxx_flags=["-std=c++17"],
+    cxx_flags=["-std=c++17"] + asan_options,
+    link_flags=asan_options,
 )
 
 system_python_toolchain(

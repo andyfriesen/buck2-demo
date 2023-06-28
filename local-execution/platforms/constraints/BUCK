@@ -1,0 +1,11 @@
+
+constraint_setting(
+    name = 'options',
+    visibility = ['PUBLIC']
+)
+
+constraint_value(
+    name = 'asan',
+    constraint_setting = ':options',
+    visibility = ['PUBLIC']
+)

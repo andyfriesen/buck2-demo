@@ -1,0 +1,22 @@
+# Used by open source projects to provide a simple platform setting
+
+load("@prelude//platforms:defs.bzl", "host_configuration")
+load(":defs.bzl", "execution_platform")
+
+config_setting(
+    name='asan',
+    constraint_values = [
+        "//platforms/constraints:asan"
+    ],
+    visibility=['PUBLIC']
+)
+
+other_constraints = [':asan'] if read_config('build', 'asan') == 'true' else []
+
+execution_platform(
+    name = "default",
+    cpu_configuration = host_configuration.cpu,
+    os_configuration = host_configuration.os,
+    other_constraints = other_constraints,
+    use_windows_path_separators = host_info().os.is_windows,
+)
