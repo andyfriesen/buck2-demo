@@ -1,0 +1,11 @@
+
+txntables = Command(
+    target="txn_tables.h",
+    source="build_txn_tables.py",
+    action="python3 build_txn_tables.py en.json jp.json -o txn_tables.h",
+)
+
+hello = Program(
+    "hello",
+    ["hello.cpp"],
+)
